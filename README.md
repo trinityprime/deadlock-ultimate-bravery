@@ -14,3 +14,10 @@ Notes:
 - The app fetches items from `https://assets.deadlock-api.com/v2/items` on startup.
 - Hero list is currently hardcoded in `src/App.tsx`.
 - Next steps: seedable randomness, champion list from API, filtering rules, shareable links.
+
+
+TODO LIST:
+- heroes custom font as their name
+- fix copy link function 
+- add ability to max first 
+- adjust theme of website to suit deadlock color scheme 
