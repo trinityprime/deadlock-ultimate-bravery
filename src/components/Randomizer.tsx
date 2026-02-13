@@ -23,10 +23,7 @@ function getImageUrl(it: Item) {
   const name = (it.name || it.displayName || it.title || "").toString();
   if (!name) return "";
   let slug = slugify(name);
-  // Exception for Spellslinger
-  if (slug === "spellslinger") {
-    slug = "spell_slinger";
-  }
+  if (slug === "spellslinger") slug = "spell_slinger";
   return `https://assets-bucket.deadlock-api.com/assets-api-res/images/items/${slot}/${slug}_sm.png`;
 }
 
@@ -35,7 +32,6 @@ export default function Randomizer({
   hero,
   heroObj,
   selectedHeroPool,
-  heroes,
   onHeroChange,
 }: {
   items: Item[];
@@ -47,7 +43,6 @@ export default function Randomizer({
 }) {
   const [result, setResult] = useState<Item[]>([]);
 
-  // Initialize on mount
   useEffect(() => {
     chooseRandom();
   }, []);
@@ -61,27 +56,24 @@ export default function Randomizer({
 
     const heroArray = Array.from(selectedHeroPool);
     const heroIndex = Math.floor(Math.random() * heroArray.length);
-    const randomHero = heroArray[heroIndex];
-    onHeroChange(randomHero);
+    onHeroChange(heroArray[heroIndex]);
 
-    const pool = items.slice();
-
+    const pool = [...items];
     for (let i = pool.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [pool[i], pool[j]] = [pool[j], pool[i]];
     }
 
-    const chosen = pool.slice(0, 9);
-    setResult(chosen);
+    // We take 12 items total: 0-8 are regular, 9-11 are locked
+    setResult(pool.slice(0, 12));
   }
 
   function copyLink() {
     const url = new URL(window.location.href);
     url.searchParams.set("hero", hero);
-    url.search = url.search.replace(/[&?]seed=[^&]*/g, "");
     try {
       navigator.clipboard.writeText(url.toString());
-      alert("Link copied to clipboard!");
+      alert("Link copied!");
     } catch {
       prompt("Copy this link:", url.toString());
     }
@@ -90,7 +82,7 @@ export default function Randomizer({
   return (
     <div className="randomizer">
       <div className="randomizer-header">
-        <button onClick={() => chooseRandom()} className="btn-randomize">
+        <button onClick={chooseRandom} className="btn-randomize">
           Randomize
         </button>
         <button onClick={copyLink} className="btn-copy">
@@ -103,12 +95,12 @@ export default function Randomizer({
           {heroObj?.img ? (
             <img
               src={heroObj.img}
-              alt={heroObj.displayName || heroObj.name}
+              alt={heroObj.name}
               className="hero-icon-large"
             />
           ) : (
             <div className="hero-placeholder-large">
-              {(heroObj?.displayName || heroObj?.name || hero)[0]}
+              {(heroObj?.name || hero)[0]}
             </div>
           )}
           <h2>{heroObj?.displayName || heroObj?.name || hero}</h2>
@@ -117,9 +109,12 @@ export default function Randomizer({
 
       {result.length > 0 && (
         <div style={{ marginTop: 24 }}>
+          {/* Single grid for all 12 items */}
           <div className="item-grid">
-            {result.slice(0, 6).map((it, i) => {
+            {result.map((it, i) => {
               const imgSrc = getImageUrl(it);
+              const isLocked = i >= 9; // Last 3 items are locked
+
               const palette: Record<string, string> = {
                 weapon: "rgba(245,158,11,0.22)",
                 vitality: "rgba(16,185,129,0.22)",
@@ -127,9 +122,10 @@ export default function Randomizer({
               };
               const tint =
                 palette[(it.slot as string) || "weapon"] ?? "transparent";
+
               return (
                 <div
-                  className="item-card"
+                  className={`item-card ${isLocked ? "locked" : ""}`}
                   key={it.id ?? i}
                   title={it.description?.desc ?? ""}
                   style={{ ["--tint" as any]: tint }}
@@ -148,48 +144,15 @@ export default function Randomizer({
                   <div className="item-title">{itemName(it)}</div>
                   {typeof (it as any).cost === "number" && (
                     <div className="item-cost">
-                      Souls {(it as any).cost.toLocaleString()}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-          <div className="item-grid-locked">
-            {result.slice(6, 9).map((it, i) => {
-              const imgSrc = getImageUrl(it);
-              const palette: Record<string, string> = {
-                weapon: "rgba(245,158,11,0.22)",
-                vitality: "rgba(16,185,129,0.22)",
-                spirit: "rgba(59,130,246,0.22)",
-              };
-              const tint =
-                palette[(it.slot as string) || "weapon"] ?? "transparent";
-              return (
-                <div
-                  className="item-card locked"
-                  key={it.id ?? i}
-                  title={it.description?.desc ?? ""}
-                  style={{ ["--tint" as any]: tint }}
-                >
-                  <div className="item-img-wrap">
-                    {imgSrc ? (
                       <img
-                        className="item-img"
-                        src={imgSrc}
-                        alt={itemName(it)}
+                        src="/souls icon.png"
+                        alt="Souls"
+                        className="cost-icon"
                       />
-                    ) : (
-                      <div className="item-placeholder">?</div>
-                    )}
-                  </div>
-                  <div className="item-title">{itemName(it)}</div>
-                  {typeof (it as any).cost === "number" && (
-                    <div className="item-cost">
-                      Souls {(it as any).cost.toLocaleString()}
+                      <span>{(it as any).cost.toLocaleString()}</span>
                     </div>
                   )}
-                  <div className="lock-indicator">🔒</div>
+                  {isLocked && <div className="lock-indicator">🔒</div>}
                 </div>
               );
             })}

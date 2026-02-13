@@ -176,9 +176,10 @@ export default function App() {
   return (
     <div className="app-layout">
       <div className="main-content">
+        <div className="top-logo">
+          <img src="/deadlock logo edited white.webp" alt="Deadlock Logo" />
+        </div>
         <div className="container">
-          <h1>Deadlock Ultimate Bravery</h1>
-
           {loading && <p>Loading assets...</p>}
           {error && <p className="error">Error: {error}</p>}
           {!loading && !error && selectedHero && (
