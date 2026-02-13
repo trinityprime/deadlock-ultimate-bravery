@@ -136,6 +136,51 @@ ul {
   margin: 6px 0;
 }
 
+.hero-name-svg-wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 15px;
+  min-height: 60px;
+  position: relative;
+}
+
+.hero-name-svg {
+  height: 50px;
+  width: auto;
+  max-width: 90%;
+  object-fit: contain;
+  filter: drop-shadow(0 0 8px rgba(239, 222, 191, 0.25));
+
+  mask-image: linear-gradient(
+    -75deg,
+    rgba(0, 0, 0, 0.6) 30%,
+    #000 50%,
+    rgba(0, 0, 0, 0.6) 70%
+  );
+  mask-size: 200%;
+  animation: shimmer 2s infinite linear;
+}
+
+.hero-fallback-text {
+  margin: 0;
+  font-size: 1.8rem;
+  color: var(--main);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  /* Match the fade animation */
+  animation: fadeIn 0.3s ease-in;
+}
+
+.hidden {
+  display: none !important;
+}
+@media (max-width: 600px) {
+  .hero-name-svg {
+    height: 35px;
+  }
+}
+
 .item-grid {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
@@ -414,6 +459,26 @@ ul {
   color: var(--black) !important;
 }
 
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    mask-position: -150%;
+  }
+  100% {
+    mask-position: 150%;
+  }
+}
+
 .hero-display {
   text-align: center;
   margin-bottom: 28px;
@@ -421,6 +486,7 @@ ul {
   background: rgba(114, 148, 127, 0.1);
   border: 1px solid var(--forest);
   border-radius: 12px;
+  animation: fadeIn 0.4s ease-out;
 }
 
 .hero-icon-large {

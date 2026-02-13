@@ -64,7 +64,6 @@ export default function Randomizer({
       [pool[i], pool[j]] = [pool[j], pool[i]];
     }
 
-    // We take 12 items total: 0-8 are regular, 9-11 are locked
     setResult(pool.slice(0, 12));
   }
 
@@ -92,6 +91,7 @@ export default function Randomizer({
 
       {result.length > 0 && (
         <div className="hero-display">
+          {/* Hero Portrait */}
           {heroObj?.img ? (
             <img
               src={heroObj.img}
@@ -100,10 +100,28 @@ export default function Randomizer({
             />
           ) : (
             <div className="hero-placeholder-large">
-              {(heroObj?.name || hero)[0]}
+              {(heroObj?.displayName || heroObj?.name || hero)[0]}
             </div>
           )}
-          <h2>{heroObj?.displayName || heroObj?.name || hero}</h2>
+
+          <div className="hero-name-svg-wrap" key={heroObj?.name || hero}>
+            <img
+              src={`/names/${slugify(heroObj?.displayName || heroObj?.name || hero)}.svg`}
+              alt={heroObj?.displayName || heroObj?.name || hero}
+              className="hero-name-svg"
+              onLoad={(e) => {
+                e.currentTarget.style.display = "block";
+                e.currentTarget.nextElementSibling?.classList.add("hidden");
+              }}
+              onError={(e) => {
+                e.currentTarget.style.display = "none";
+                e.currentTarget.nextElementSibling?.classList.remove("hidden");
+              }}
+            />
+            <h2 className="hero-fallback-text">
+              {heroObj?.displayName || heroObj?.name || hero}
+            </h2>
+          </div>
         </div>
       )}
 
@@ -113,7 +131,7 @@ export default function Randomizer({
           <div className="item-grid">
             {result.map((it, i) => {
               const imgSrc = getImageUrl(it);
-              const isLocked = i >= 9; // Last 3 items are locked
+              const isLocked = i >= 9;
 
               const palette: Record<string, string> = {
                 weapon: "rgba(245,158,11,0.22)",
