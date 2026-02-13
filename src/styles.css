@@ -19,9 +19,21 @@ body {
   font-family: var(--main-font);
   margin: 0;
   padding: 20px;
-  background: linear-gradient(135deg, var(--black) 0%, var(--teal-dark) 100%);
   color: var(--main);
   min-height: 100vh;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(47, 68, 66, 0.4) 0%,
+      rgba(34, 32, 33, 0.9) 100%
+    ),
+    url("../public/deadlock bg 2.webp");
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
 }
 
 .app-layout {
