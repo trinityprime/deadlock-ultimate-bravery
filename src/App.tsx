@@ -172,7 +172,7 @@ export default function App() {
   useEffect(() => {
     setQueryParams({ hero: selectedHero ?? null });
   }, [selectedHero]);
-
+  
   return (
     <div className="app-layout">
       <div className="main-content">
