@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import HeroSelector from "./components/HeroSelector";
 import Randomizer from "./components/Randomizer";
 import { WHITELIST } from "./data/whitelist";
 
@@ -84,6 +83,30 @@ export default function App() {
   const [selectedHero, setSelectedHero] = useState<string | undefined>(
     initialHero,
   );
+
+  useEffect(() => {
+    if (heroes.length > 0 && selectedHeroPool.size > 0) {
+      Array.from(selectedHeroPool).forEach((heroId) => {
+        const heroObj = heroes.find(
+          (h) => h.id === heroId || h.name === heroId,
+        );
+        const nameToSlug = heroObj?.displayName || heroObj?.name;
+
+        if (nameToSlug) {
+          const img = new Image();
+          const slug = nameToSlug
+            .toLowerCase()
+            .replace(/\u2019/g, "'")
+            .replace(/'s\b/g, "")
+            .replace(/'/g, "")
+            .replace(/[^a-z0-9]+/g, "_")
+            .replace(/^_+|_+$/g, "");
+
+          img.src = `/names/${slug}.svg`;
+        }
+      });
+    }
+  }, [heroes, selectedHeroPool]);
 
   useEffect(() => {
     setLoading(true);
@@ -172,7 +195,7 @@ export default function App() {
   useEffect(() => {
     setQueryParams({ hero: selectedHero ?? null });
   }, [selectedHero]);
-  
+
   return (
     <div className="app-layout">
       <div className="main-content">
